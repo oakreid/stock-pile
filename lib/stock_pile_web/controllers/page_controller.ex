@@ -4,4 +4,6 @@ defmodule StockPileWeb.PageController do
   def index(conn, _params) do
     render(conn, "index.html")
   end
+
+  # TODO: don't forget to put_session when you make user login/register
 end

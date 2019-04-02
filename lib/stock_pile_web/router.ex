@@ -7,6 +7,7 @@ defmodule StockPileWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug StockPileWeb.Plugs.FetchSession
   end
 
   pipeline :api do
@@ -15,6 +16,8 @@ defmodule StockPileWeb.Router do
 
   scope "/", StockPileWeb do
     pipe_through :browser
+
+    resources "/sessions", SessionController, only: [:create, :delete], singleton: true
 
     get "/", PageController, :index
   end
