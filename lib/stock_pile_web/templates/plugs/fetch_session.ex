@@ -4,7 +4,7 @@ defmodule StockPileWeb.Plugs.FetchSession do
   def init(args), do: args
 
   def call(conn, _args) do
-    account = StockPile.Tools.get_account_by_id(get_session(conn, :account_id) || -1)
+    account = StockPile.Tools.get_account_by_id(inspect(get_session(conn, :account_id)))
     if account do
       assign(conn, :current_user, account)
     else

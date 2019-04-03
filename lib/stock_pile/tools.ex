@@ -3,12 +3,30 @@ defmodule StockPile.Tools do
   alias StockPile.Repo
 
   def get_account_by_id(id) do
-    SQL.query(Repo, "select * from account where account_id=$1::integer", [id])
-    |> elem(1) |> Map.get(:rows) |> Enum.at(1)
+    if id != "nil" do
+      query_result = SQL.query(Repo, "select * from account where account_id=" <> id <> ";", [])
+      map_single_row(query_result)
+    else
+      nil
+    end
   end
 
-  def get_account_by_user_name(user_name) do
-    SQL.query(Repo, "select * from account where user_name='$1'", [user_name])
-    |> elem(1) |> Map.get(:rows) |> Enum.at(1)
+  def auth_user(user_name, password) do
+    password_hash = Argon2.hash_pwd_salt(password)
+    query_result = SQL.query(Repo, "select * from account where user_name='" <> user_name <> "' and password='" <> password <> "';", [])
+    map_single_row(query_result)
+  end
+
+  def map_single_row(query_result) do
+    case query_result do
+      {:ok, %Mariaex.Result{} = mariaex_result} ->
+        result = mariaex_result |> Map.from_struct()
+        IO.puts(inspect(Map.get(result, :rows)))
+        if Map.get(result, :rows) != [] do
+          Enum.zip(Map.get(result, :columns), Map.get(result, :rows) |> Enum.at(0)) |> Enum.into(%{})
+        else
+          nil
+        end
+    end
   end
 end

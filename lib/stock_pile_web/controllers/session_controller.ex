@@ -1,12 +1,12 @@
 defmodule StockPileWeb.SessionController do
   use StockPileWeb, :controller
 
-  def create(conn, %{"user_name" => user_name}) do
-    account = StockPile.Tools.get_account_by_user_name(user_name)
+  def create(conn, %{"user_name" => user_name, "password" => password}) do
+    account = StockPile.Tools.auth_user(user_name, password)
     if account do
       conn
-      |> put_session(:account_id, account.account_id)
-      |> put_flash(:info, "Welcome back #{account.user_name}")
+      |> put_session(:account_id, Map.get(account, "account_id"))
+      |> put_flash(:info, "Welcome back #{Map.get(account, "user_name")}")
       |> redirect(to: Routes.page_path(conn, :index))
     else
       conn
