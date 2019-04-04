@@ -5,5 +5,9 @@ defmodule StockPileWeb.PageController do
     render(conn, "index.html")
   end
 
-  # TODO: don't forget to put_session when you make user login/register 
+  def profile(conn, _params) do
+    render(conn, "profile.html")
+  end
+
+  # TODO: don't forget to put_session when you make user register
 end

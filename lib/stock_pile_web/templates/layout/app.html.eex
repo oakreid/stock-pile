@@ -59,6 +59,9 @@
       </div>
       <%= render @view_module, @view_template, assigns %>
     </div>
+    <script type="text/javascript">
+      var token = <%= raw Jason.encode!(Plug.CSRFProtection.get_csrf_token()) %>;
+    </script>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

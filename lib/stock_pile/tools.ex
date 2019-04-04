@@ -2,6 +2,11 @@ defmodule StockPile.Tools do
   alias Ecto.Adapters.SQL
   alias StockPile.Repo
 
+  def add_funds(amount, id) do
+    _query_result = SQL.query(Repo, "update account set account_balance = account_balance + " <> amount <> " where account_id=" <> id <> ";", [])
+    get_account_by_id(id)
+  end
+
   def get_account_by_id(id) do
     if id != "nil" do
       query_result = SQL.query(Repo, "select * from account where account_id=" <> id <> ";", [])

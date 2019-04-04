@@ -20,6 +20,9 @@ defmodule StockPileWeb.Router do
     resources "/sessions", SessionController, only: [:create, :delete], singleton: true
 
     get "/", PageController, :index
+    get "/profile", PageController, :profile
+
+    post "/addfunds", OtherController, :addfunds
   end
 
   # Other scopes may use custom stacks.

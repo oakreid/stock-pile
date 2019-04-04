@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-12">
+    <h1>My Profile:</h1>
+
+    <p>Username: <%= Map.get(@current_user, "user_name") %></p>
+    <p>Account ID: <%= Map.get(@current_user, "account_id") %></p>
+    <p>Account Type: <%= Map.get(@current_user, "account_type") %></p>
+    <p>Name: <%= Map.get(@current_user, "first_name") %> <%= Map.get(@current_user, "last_name") %></p>
+    <p>Address: <%= Map.get(@current_user, "address") %></p>
+    <p>Status: <%= Map.get(@current_user, "status") %></p>
+    <%= if Map.has_key?(@current_user, "email") do %>
+     <p>Email: <%= Map.get(@current_user, "email") %></p>
+    <% end %>
+    <%= if Map.has_key?(@current_user, "tax_payer_No") do %>
+     <p>Tax Payer Number: <%= Map.get(@current_user, "tax_payer_No") %></p>
+    <% end %>
+    <%= if Map.has_key?(@current_user, "account_balance") do %>
+      <p id="balancetext">Account Balance: <%= Map.get(@current_user, "account_balance") %></p>
+      <p>
+        <input id="balanceinput" type="number" placeholder="Enter Amount"/>
+        <button id="balancebutton">Add Funds</button>
+      </p>
+    <% end %>
+    <%= if Map.has_key?(@current_user, "ssn") do %>
+     <p>SSN: <%= Map.get(@current_user, "ssn") %></p>
+    <% end %>
+    <%= if Map.has_key?(@current_user, "bonus") do %>
+     <p>Bonus: <%= Map.get(@current_user, "bonus") %></p>
+    <% end %>
+  </div>
+</div>
