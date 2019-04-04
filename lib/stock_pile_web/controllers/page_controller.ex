@@ -9,5 +9,19 @@ defmodule StockPileWeb.PageController do
     render(conn, "profile.html")
   end
 
-  # TODO: don't forget to put_session when you make user register
+  def registerbroker(conn, _params) do
+    render(conn, "register_broker.html")
+  end
+
+  def registerdealer(conn, _params) do
+    render(conn, "register_dealer.html")
+  end
+
+  def stocks(conn, _params) do
+    render(conn, "stocks.html")
+  end
+
+  def investments(conn, _params) do
+    render(conn, "investments.html")
+  end
 end

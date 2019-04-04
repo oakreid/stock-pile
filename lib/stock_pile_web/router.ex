@@ -21,8 +21,14 @@ defmodule StockPileWeb.Router do
 
     get "/", PageController, :index
     get "/profile", PageController, :profile
+    get "/register_broker", PageController, :registerbroker
+    get "/register_dealer", PageController, :registerdealer
+    get "/stocks", PageController, :stocks
+    get "/investments", PageController, :investments
 
     post "/addfunds", OtherController, :addfunds
+    post "/register_broker", OtherController, :registerbroker
+    post "/register_dealer", OtherController, :registerdealer
   end
 
   # Other scopes may use custom stacks.
