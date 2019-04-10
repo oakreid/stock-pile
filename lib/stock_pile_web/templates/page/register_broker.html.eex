@@ -1,5 +1,14 @@
 <div class="row">
   <div class="col-12">
-    TODO
+    <h1>Register Broker</h1>
+    <p>Username: <input id="broker-username"></p>
+    <p>Password: <input id="broker-password" type="password"></p>
+    <p>First Name: <input id="broker-first-name"></p>
+    <p>Last Name: <input id="broker-last-name"></p>
+    <p>Address: <input id="broker-address"></p>
+    <p>SSN: <input id="broker-ssn"></p>
+    <p>Bonus: <input id="broker-bonus"></p>
+    <button id="broker-register">Register</button>
+    <p id="broker-status"></p>
   </div>
 </div>

@@ -1,4 +1,4 @@
-defmodule StockPileWeb.OtherController do
+defmodule StockPileWeb.PostController do
   use StockPileWeb, :controller
   alias StockPileWeb.SessionController
   alias StockPile.Tools
@@ -14,14 +14,17 @@ defmodule StockPileWeb.OtherController do
   end
 
   def registerbroker(conn, %{"account" => account}) do
-    _side_effect = Tools.register_broker(account)
-
-    SessionController.create(conn, %{"user_name" => Map.get(account, "user_name"), "password" => Map.get(account, "password")})
+    register_account = Tools.register_broker(account)
+    conn
+    |> put_resp_header("content-type", "application/json; charset=UTF-8")
+    |> send_resp(elem(register_account, 0), Jason.encode!(%{}))
   end
 
   def registerdealer(conn, %{"account" => account}) do
-    _side_effect = Tools.register_dealer(account)
-
-    SessionController.create(conn, %{"user_name" => Map.get(account, "user_name"), "password" => Map.get(account, "password")})
+    IO.puts(inspect(account))
+    register_account = Tools.register_dealer(account)
+    conn
+    |> put_resp_header("content-type", "application/json; charset=UTF-8")
+    |> send_resp(elem(register_account, 0), Jason.encode!(%{}))
   end
 end

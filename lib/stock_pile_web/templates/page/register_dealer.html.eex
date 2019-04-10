@@ -1,5 +1,14 @@
 <div class="row">
   <div class="col-12">
-    TODO
+    <h1>Register Dealer</h1>
+    <p>Username: <input id="dealer-username"></p>
+    <p>Password: <input id="dealer-password" type="password"></p>
+    <p>First Name: <input id="dealer-first-name"></p>
+    <p>Last Name: <input id="dealer-last-name"></p>
+    <p>Address: <input id="dealer-address"></p>
+    <p>Email: <input id="dealer-email"></p>
+    <p>Tax Payer Number: <input id="dealer-tpn"></p>
+    <button id="dealer-register">Register</button>
+    <p id="dealer-status"></p>
   </div>
 </div>
