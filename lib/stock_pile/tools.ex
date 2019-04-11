@@ -2,6 +2,13 @@ defmodule StockPile.Tools do
   alias Ecto.Adapters.SQL
   alias StockPile.Repo
 
+  def lookup_stock(ticker_val) do
+    q = "select * from stock s join historic_data h on s.symbol = h.symbol where s.symbol='" <> ticker_val <> "';"
+    query_result = SQL.query(Repo, q, [])
+    IO.puts(inspect(query_result))
+    query_result
+  end
+
   def register_broker(account) do
     query1 = Enum.join([
     "insert into account(account_id, user_name, password, account_type, status)
@@ -26,9 +33,9 @@ defmodule StockPile.Tools do
     "insert into account(account_id, user_name, password, account_type, status)
     values (", Map.get(account, "account_id"), ", '" , Map.get(account, "user_name") , "', '" , Map.get(account, "password") , "', 'dealer', 'active');"], "")
 
-    query2 = Enum.join(["insert into dealer (account_id, first_name, last_name, account_balance, address, email, tax_payer_no)
+    query2 = Enum.join(["insert into dealer (account_id, first_name, last_name, account_balance, address, email, tax_payer_No)
     values (" , Map.get(account, "account_id") , ", '" , Map.get(account, "first_name") , "', '" , Map.get(account, "last_name") , "', 0, '" , Map.get(account, "address") , "', '" , Map.get(account, "email") ,
-    "', " , Map.get(account, "tax_payer_no") , ");
+    "', " , Map.get(account, "tax_payer_No") , ");
     "], "")
 
     q1 = SQL.query(Repo, query1, [])
@@ -80,7 +87,7 @@ defmodule StockPile.Tools do
     end
   end
 
-  def map_single_row(query_result) do
+  defp map_single_row(query_result) do
     IO.puts(inspect(query_result))
     case query_result do
       {:ok, %Mariaex.Result{} = mariaex_result} ->

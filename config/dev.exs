@@ -70,6 +70,6 @@ config :phoenix, :plug_init_mode, :runtime
 config :stock_pile, StockPile.Repo,
   username: "oakley",
   password: "oaksql",
-  database: "usertest",
+  database: "CS3200_Project",
   hostname: "localhost",
   pool_size: 10

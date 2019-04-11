@@ -1,6 +1,5 @@
 defmodule StockPileWeb.PostController do
   use StockPileWeb, :controller
-  alias StockPileWeb.SessionController
   alias StockPile.Tools
 
   def addfunds(conn, %{"amount" => amount}) do
@@ -26,5 +25,24 @@ defmodule StockPileWeb.PostController do
     conn
     |> put_resp_header("content-type", "application/json; charset=UTF-8")
     |> send_resp(elem(register_account, 0), Jason.encode!(%{}))
+  end
+
+  def lookupstock(conn, %{"ticker_val" => ticker_val}) do
+    stock_info = Tools.lookup_stock(ticker_val)
+    case stock_info do
+      {:ok, query_result} ->
+        query_map = Map.from_struct(query_result)
+        table_data = [Map.get(query_map, :columns) | Map.get(query_map, :rows)]
+        resp = %{
+          data: table_data
+        }
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:ok, Jason.encode!(resp))
+      _ ->
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:error, Jason.encode!(%{}))
+    end
   end
 end

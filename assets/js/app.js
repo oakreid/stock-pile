@@ -20,6 +20,31 @@ import jQuery from 'jquery';
 window.jQuery = window.$ = jQuery;
 import "bootstrap";
 import _ from 'lodash';
+import { table } from 'table';
+
+$(function() {
+  $('#stock-submit').click((ev) => {
+    let ticker_map = {
+      ticker_val: $('#stock-input').val()
+    }
+
+    $.ajax("/lookup_stock", {
+      method: "post",
+      dataType: "json",
+      beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-Token", token);
+      },
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(ticker_map),
+      success: (resp) => {
+        $('#stock-body').text(table(resp.data));
+      },
+      error: (resp) => {
+        $('#stock-body').text("Please enter a valid NASDAQ ticker symbol");
+      }
+    });
+  });
+});
 
 $(function() {
   $('#dealer-register').click((ev) => {
@@ -32,7 +57,7 @@ $(function() {
         last_name: $('#dealer-last-name').val(),
         address: $('#dealer-address').val(),
         email: $('#dealer-email').val(),
-        tax_payer_no: $('#dealer-tpn').val()
+        tax_payer_No: $('#dealer-tpn').val()
       }
     }
 

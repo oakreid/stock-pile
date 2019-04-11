@@ -1,5 +1,9 @@
 <div class="row">
   <div class="col-12">
-    TODO
+    <p>
+      <input id="stock-input" placeholder="Enter a stock ticker symbol">
+      <button id="stock-submit">Search</button>
+    </p>
+    <p id="stock-body" style="font-family:monospace; white-space:pre;"></p>
   </div>
 </div>
