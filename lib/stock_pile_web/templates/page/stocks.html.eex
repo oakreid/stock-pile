@@ -4,6 +4,7 @@
       <input id="stock-input" placeholder="Enter a stock ticker symbol">
       <button id="stock-submit">Search</button>
     </p>
+    <p id="stock-header" style="white-space:pre;"></p>
     <p id="stock-body" style="font-family:monospace; white-space:pre;"></p>
   </div>
 </div>

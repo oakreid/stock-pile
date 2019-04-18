@@ -1,5 +1,35 @@
 <div class="row">
   <div class="col-12">
-    TODO
+    <p>
+      <h1>New Investment</h1>
+      <p>Stock Ticker Symbol: <input id="invest-symbol"></p>
+      <p>Number of Shares <input id="invest-shares" type="number"></p>
+      <p>Date: <input id="invest-date" type="date"></p>
+      <%= cond do %>
+        <% Map.get(@current_user, "account_type") == "dealer" -> %>
+          <button id="invest-submit-dealer" data-account-id='<%= Map.get(@current_user, "account_id") %>'>Submit Investment</button>
+          <p id="invest-status"></p>
+          <br><br>
+          <h1>Current Trade Orders:</h1>
+          <%= for order <- StockPile.Tools.fetch_orders(Map.get(@current_user, "account_id")) |> Enum.reverse() do %>
+            <p class="bg-primary rounded text-white">
+              Trade ID: <%= Enum.at(order, 0) %><br>
+              Date Of Trade: <%= Enum.at(order, 1) |> inspect() |> String.slice(3..-2) %><br>
+              Type: <%= Enum.at(order, 2) %><br>
+              Stock Symbol: <%= Enum.at(order, 3) %><br>
+              Number of Shares: <%= Enum.at(order, 4) |> inspect() %><br>
+              Price per Share: <%= Enum.at(order, 5) |> inspect() %><br>
+              Result: <%= Enum.at(order, 6) %><br>
+              <button class="sell-stock" data-trade-id="<%=Enum.at(order, 0)%>">SELL STOCK AT THIS DATE -></button>
+              <input id="sell-date" type="date">
+            </p>
+          <% end %>
+        <% Map.get(@current_user, "account_type") == "broker" -> %>
+          <p>Dealer Username: <input id="invest-dealer-username"></p>
+          <p>Dealer Password: <input id="invest-dealer-password"></p>
+          <button id="invest-submit-broker">Submit Investment</button>
+          <p id="invest-status"></p>
+      <% end %>
+    </p>
   </div>
 </div>

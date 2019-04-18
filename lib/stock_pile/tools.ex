@@ -2,11 +2,72 @@ defmodule StockPile.Tools do
   alias Ecto.Adapters.SQL
   alias StockPile.Repo
 
+  def sell_stock(trade_id, account_id, date) do
+    query0 = Enum.join(["select * from trade_order where trade_id=", trade_id, ";"], "")
+    trade_info = SQL.query(Repo, query0, []) |> map_single_row()
+
+    query = Enum.join(["select * from historic_data where date='", date, "' and symbol='", Map.get(trade_info, "stock_symbol"), "';"], "")
+    stock_info = SQL.query(Repo, query, []) |> map_single_row()
+
+    query1 = Enum.join(["delete from trade_order where trade_id=", trade_id, ";"], "")
+
+    q1 = SQL.query(Repo, query1, [])
+    case q1 do
+      {:ok, _} ->
+        amount = Map.get(trade_info, "num_of_share") * Map.get(stock_info, "close_price")
+        SQL.query(Repo, Enum.join(["update dealer set account_balance = account_balance + ", Integer.to_string(amount), " where account_id=", account_id, ";"], ""), [])
+      _ ->
+        {:error, ""}
+    end
+  end
+
+  def invest_dealer(trade_order) do
+    query1 = "select * from historic_data where symbol='" <> Map.get(trade_order, "stock_symbol") <> "' and date='" <> Map.get(trade_order, "date") <> "';"
+
+    q1 = SQL.query(Repo, query1, [])
+    case q1 do
+      {:ok, _} ->
+        q1_map = map_single_row(q1)
+        IO.puts(inspect(q1_map))
+        query2 = Enum.join([
+        "insert into trade_order(trade_id, date, type, stock_symbol, num_of_share, price_per_share, result, account_id)
+        values (", Map.get(trade_order, "trade_id"), ", '", Map.get(trade_order, "date"), "', '", Map.get(trade_order, "type"), "', '", Map.get(trade_order, "stock_symbol"), "',
+        ", Map.get(trade_order, "num_of_share"), ", ", Integer.to_string(Map.get(q1_map, "close_price")), ", '", Map.get(trade_order, "result"), "', ", Map.get(trade_order, "account_id"), ");
+        "], "")
+
+        q2 = SQL.query(Repo, query2, [])
+        case {q2, q1_map} do
+          {{:ok, _}, q1m} ->
+            num_of_share = Map.get(trade_order, "num_of_share") |> Integer.parse() |> elem(0)
+            amount = -1 * num_of_share * Map.get(q1m, "close_price")
+            IO.puts(inspect(amount))
+            SQL.query(Repo, Enum.join(["update dealer set account_balance = account_balance + ", Integer.to_string(amount), " where account_id=", Map.get(trade_order, "account_id"), ";"], ""), [])
+          _ ->
+            {:error, ""}
+        end
+      _ ->
+        {:error, ""}
+    end
+  end
+
+  def fetch_orders(account_id) do
+    q1 = "select * from trade_order where account_id=" <> Integer.to_string(account_id) <> ";"
+    query_result = SQL.query(Repo, q1, [])
+    case query_result do
+        {:ok, dbo} ->
+          qmap = Map.from_struct(dbo)
+          IO.puts(inspect(Map.get(qmap, :rows)))
+          Map.get(qmap, :rows)
+    end
+  end
+
   def lookup_stock(ticker_val) do
-    q = "select * from stock s join historic_data h on s.symbol = h.symbol where s.symbol='" <> ticker_val <> "';"
-    query_result = SQL.query(Repo, q, [])
-    IO.puts(inspect(query_result))
-    query_result
+    q1 = "select * from stock s where s.symbol='" <> ticker_val <> "';"
+    query_result1 = SQL.query(Repo, q1, [])
+    q2 = "select * from historic_data h where h.symbol='" <> ticker_val <> "';"
+    query_result2 = SQL.query(Repo, q2, [])
+    IO.puts(inspect({map_single_row(query_result1), query_result2}))
+    {map_single_row(query_result1), query_result2}
   end
 
   def register_broker(account) do
@@ -15,7 +76,7 @@ defmodule StockPile.Tools do
     values (", Map.get(account, "account_id"), ", '" , Map.get(account, "user_name") , "', '" , Map.get(account, "password") , "', 'broker', 'active');"], "")
 
     query2 = Enum.join(["insert into broker (account_id, first_name, last_name, address, ssn, bonus)
-    values (" , Map.get(account, "account_id") , ", '" , Map.get(account, "first_name") , "', '" , Map.get(account, "last_name") , "', 0, '" , Map.get(account, "address") , "', " , Map.get(account, "ssn") ,
+    values (" , Map.get(account, "account_id") , ", '" , Map.get(account, "first_name") , "', '" , Map.get(account, "last_name") , "', '" , Map.get(account, "address") , "', " , Map.get(account, "ssn") ,
     ", " , Map.get(account, "bonus") , ");
     "], "")
 
@@ -34,7 +95,7 @@ defmodule StockPile.Tools do
     values (", Map.get(account, "account_id"), ", '" , Map.get(account, "user_name") , "', '" , Map.get(account, "password") , "', 'dealer', 'active');"], "")
 
     query2 = Enum.join(["insert into dealer (account_id, first_name, last_name, account_balance, address, email, tax_payer_No)
-    values (" , Map.get(account, "account_id") , ", '" , Map.get(account, "first_name") , "', '" , Map.get(account, "last_name") , "', 0, '" , Map.get(account, "address") , "', '" , Map.get(account, "email") ,
+    values (" , Map.get(account, "account_id") , ", '" , Map.get(account, "first_name") , "', '" , Map.get(account, "last_name") , "', '" , Map.get(account, "address") , "', '" , Map.get(account, "email") ,
     "', " , Map.get(account, "tax_payer_No") , ");
     "], "")
 

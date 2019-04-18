@@ -30,12 +30,43 @@ defmodule StockPileWeb.PostController do
   def lookupstock(conn, %{"ticker_val" => ticker_val}) do
     stock_info = Tools.lookup_stock(ticker_val)
     case stock_info do
-      {:ok, query_result} ->
+      {stock_singular_info, {:ok, query_result}} ->
         query_map = Map.from_struct(query_result)
-        table_data = [Map.get(query_map, :columns) | Map.get(query_map, :rows)]
+        table_data = [tl(Map.get(query_map, :columns)) | Enum.map(Map.get(query_map, :rows), fn(x) -> tl(x) end)]
         resp = %{
+          info: stock_singular_info,
           data: table_data
         }
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:ok, Jason.encode!(resp))
+      _ ->
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:error, Jason.encode!(%{}))
+    end
+  end
+
+  def investdealer(conn, %{"trade_order" => trade_order}) do
+    invest_result = Tools.invest_dealer(trade_order)
+    case invest_result do
+      {:ok, _query_result} ->
+        resp = %{}
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:ok, Jason.encode!(resp))
+      _ ->
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:error, Jason.encode!(%{}))
+    end
+  end
+
+  def sellstock(conn, %{"trade_id" => trade_id, "account_id" => account_id, "date" => date}) do
+    sell_result = Tools.sell_stock(trade_id, account_id, date)
+    case sell_result do
+      {:ok, _query_result} ->
+        resp = %{}
         conn
         |> put_resp_header("content-type", "application/json; charset=UTF-8")
         |> send_resp(:ok, Jason.encode!(resp))

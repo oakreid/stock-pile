@@ -30,6 +30,9 @@ defmodule StockPileWeb.Router do
     post "/register_broker", PostController, :registerbroker
     post "/register_dealer", PostController, :registerdealer
     post "/lookup_stock", PostController, :lookupstock
+    post "/invest_dealer", PostController, :investdealer
+    post "/invest_broker", PostController, :investbroker
+    post "/sell_stock", PostController, :sellstock
   end
 
   # Other scopes may use custom stacks.

@@ -23,6 +23,61 @@ import _ from 'lodash';
 import { table } from 'table';
 
 $(function() {
+  $('.sell-stock').click((ev) => {
+    let sell_data = {
+      trade_id: $(ev.target).data('trade-id'),
+      account_id: $('#invest-submit-dealer').data('account-id'),
+      date: $('#sell-date').val()
+    }
+
+    $.ajax("/sell_stock", {
+      method: "post",
+      dataType: "json",
+      beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-Token", token);
+      },
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(sell_data),
+      success: (resp) => {
+        location.reload();
+      }
+    });
+  });
+});
+
+$(function() {
+  $('#invest-submit-dealer').click((ev) => {
+    let invest_data = {
+      trade_order: {
+        trade_id: "" + _.random(999999999),
+        stock_symbol: $("#invest-symbol").val(),
+        num_of_share: $("#invest-shares").val(),
+        date: $("#invest-date").val(),
+        account_id: $(ev.target).data('account-id'),
+        type: "dealer",
+        result: "success"
+      }
+    }
+
+    $.ajax("/invest_dealer", {
+      method: "post",
+      dataType: "json",
+      beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-Token", token);
+      },
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(invest_data),
+      success: (resp) => {
+        location.reload();
+      },
+      error: (resp) => {
+        $("#invest-status").text("Failed to process investment");
+      }
+    });
+  });
+});
+
+$(function() {
   $('#stock-submit').click((ev) => {
     let ticker_map = {
       ticker_val: $('#stock-input').val()
@@ -37,6 +92,12 @@ $(function() {
       contentType: "application/json; charset=UTF-8",
       data: JSON.stringify(ticker_map),
       success: (resp) => {
+        let header_text = "Viewing Stock info for " + resp.info.company_name + "\n\n"
+          + "Ticker Symbol: " + resp.info.symbol + "\n"
+          + "Subsidiaries: " + resp.info.subsidiaries + "\n"
+          + "10-k: " + resp.info["10-k"] + "\n"
+          + "News: " + resp.info.news + "\n";
+        $('#stock-header').text(header_text);
         $('#stock-body').text(table(resp.data));
       },
       error: (resp) => {
