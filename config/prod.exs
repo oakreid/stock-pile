@@ -12,7 +12,7 @@ use Mix.Config
 config :stock_pile, StockPileWeb.Endpoint,
   server: true,
   root: ".",
-  version: Application.spec(:phoenix_distillery, :vsn)
+  version: Application.spec(:phoenix_distillery, :vsn),
   http: [:inet6, port: 4798],
   url: [host: "stockpile.oakreid.info", scheme: "https", port: 443],
   cache_static_manifest: "priv/static/cache_manifest.json"
