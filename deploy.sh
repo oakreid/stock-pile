@@ -1,5 +1,5 @@
 export MIX_ENV=prod
-export PORT=4795
+export PORT=4798
 export NODEBIN=`pwd`/assets/node_modules/.bin
 export PATH="$PATH:$NODEBIN"
 
@@ -22,4 +22,4 @@ mix release
 
 echo "Starting app..."
 
-_build/prod/rel/stock_pile/bin/stock_pile start
+_build/prod/rel/stock_pile/bin/stock_pile foreground
