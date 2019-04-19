@@ -25,7 +25,7 @@
             </p>
           <% end %>
         <% Map.get(@current_user, "account_type") == "broker" -> %>
-          <p>Dealer Username: <input id="invest-dealer-username"></p>
+          <p>Dealer Username: <input type="password" id="invest-dealer-username"></p>
           <p>Dealer Password: <input id="invest-dealer-password"></p>
           <button id="invest-submit-broker">Submit Investment</button>
           <p id="invest-status"></p>

@@ -21,7 +21,7 @@ defmodule StockPile.Tools do
     end
   end
 
-  def invest_dealer(trade_order) do
+  def invest_broker(trade_order) do
     query1 = "select * from historic_data where symbol='" <> Map.get(trade_order, "stock_symbol") <> "' and date='" <> Map.get(trade_order, "date") <> "';"
 
     q1 = SQL.query(Repo, query1, [])
@@ -42,6 +42,36 @@ defmodule StockPile.Tools do
             amount = -1 * num_of_share * Map.get(q1m, "close_price")
             IO.puts(inspect(amount))
             SQL.query(Repo, Enum.join(["update dealer set account_balance = account_balance + ", Integer.to_string(amount), " where account_id=", Map.get(trade_order, "account_id"), ";"], ""), [])
+          _ ->
+            {:error, ""}
+        end
+      _ ->
+        {:error, ""}
+    end
+  end
+
+  def invest_dealer(trade_order) do
+    user_map = auth_user(Map.get(trade_order, "username"), Map.get(trade_order, "password"))
+
+    query1 = "select * from historic_data where symbol='" <> Map.get(trade_order, "stock_symbol") <> "' and date='" <> Map.get(trade_order, "date") <> "';"
+    q1 = SQL.query(Repo, query1, [])
+    case q1 do
+      {:ok, _} ->
+        q1_map = map_single_row(q1)
+        IO.puts(inspect(q1_map))
+        query2 = Enum.join([
+        "insert into trade_order(trade_id, date, type, stock_symbol, num_of_share, price_per_share, result, account_id)
+        values (", Map.get(trade_order, "trade_id"), ", '", Map.get(trade_order, "date"), "', '", Map.get(trade_order, "type"), "', '", Map.get(trade_order, "stock_symbol"), "',
+        ", Map.get(trade_order, "num_of_share"), ", ", Integer.to_string(Map.get(q1_map, "close_price")), ", '", Map.get(trade_order, "result"), "', ", Map.get(user_map, "account_id"), ");
+        "], "")
+
+        q2 = SQL.query(Repo, query2, [])
+        case {q2, q1_map} do
+          {{:ok, _}, q1m} ->
+            num_of_share = Map.get(trade_order, "num_of_share") |> Integer.parse() |> elem(0)
+            amount = -1 * num_of_share * Map.get(q1m, "close_price")
+            IO.puts(inspect(amount))
+            SQL.query(Repo, Enum.join(["update dealer set account_balance = account_balance + ", Integer.to_string(amount), " where account_id=", Map.get(user_map, "account_id"), ";"], ""), [])
           _ ->
             {:error, ""}
         end

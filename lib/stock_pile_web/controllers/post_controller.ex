@@ -62,6 +62,21 @@ defmodule StockPileWeb.PostController do
     end
   end
 
+  def investbroker(conn, %{"trade_order" => trade_order}) do
+    invest_result = Tools.invest_broker(trade_order)
+    case invest_result do
+      {:ok, _query_result} ->
+        resp = %{}
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:ok, Jason.encode!(resp))
+      _ ->
+        conn
+        |> put_resp_header("content-type", "application/json; charset=UTF-8")
+        |> send_resp(:error, Jason.encode!(%{}))
+    end
+  end
+
   def sellstock(conn, %{"trade_id" => trade_id, "account_id" => account_id, "date" => date}) do
     sell_result = Tools.sell_stock(trade_id, account_id, date)
     case sell_result do

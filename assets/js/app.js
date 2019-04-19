@@ -46,6 +46,39 @@ $(function() {
 });
 
 $(function() {
+  $('#invest-submit-broker').click((ev) => {
+    let invest_data = {
+      trade_order: {
+        trade_id: "" + _.random(999999999),
+        stock_symbol: $("#invest-symbol").val(),
+        num_of_share: $("#invest-shares").val(),
+        date: $("#invest-date").val(),
+        username: $("#invest-dealer-username").val(),
+        password: $("#invest-dealer-password").val(),
+        type: "broker",
+        result: "success"
+      }
+    }
+
+    $.ajax("/invest_dealer", {
+      method: "post",
+      dataType: "json",
+      beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-Token", token);
+      },
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(invest_data),
+      success: (resp) => {
+        $("#invest-status").text("Investment successfully processed. Check the dealer's account to view its status");
+      },
+      error: (resp) => {
+        $("#invest-status").text("Failed to process investment");
+      }
+    });
+  });
+});
+
+$(function() {
   $('#invest-submit-dealer').click((ev) => {
     let invest_data = {
       trade_order: {
